@@ -298,7 +298,14 @@
                 if (result.estado=="ok"){
                    alert(result.mensaje)
                     let filas = '';
+                    $('#producto').empty()
                     result.productos.forEach(function(p) {
+                        $('#producto').append(
+                            $('<option>', {
+                                value: p.id,
+                                text: p.nombre
+                            })
+                        );
                         filas += `
                             <tr>
                                 <td>${p.id}</td>
