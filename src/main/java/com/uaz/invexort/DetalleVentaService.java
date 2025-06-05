@@ -13,7 +13,7 @@ public class DetalleVentaService implements DetalleVentaRepository{
     private JdbcTemplate jdbcTemplate;
 
     public List<DetalleVenta> obtenerDetalleVentas() {
-        String sql = "SELECT * FROM detalle_venta";
+        String sql = "SELECT * FROM detalle_venta order by id";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(DetalleVenta.class));
     }
 
