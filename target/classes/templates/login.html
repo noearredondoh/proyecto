@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Invexort - Prototipo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            background: #eaeaea;
+        }
+
+        aside {
+            width: 200px;
+            background: #2c2c2c;
+            color: white;
+            padding: 20px;
+        }
+
+        aside h2 {
+            margin-top: 0;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        aside a {
+            display: block;
+            margin: 10px 0;
+            color: #ccc;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        aside a.active, aside a:hover {
+            background: #444;
+            color: white;
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        section {
+            display: none;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #2c2c2c;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #444;
+        }
+
+        .panel-buttons button {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .small-text {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<aside>
+    <h2>INVEXORT</h2>
+    <a href="#" onclick="navegar('login', this)" class="active">Iniciar sesión</a>
+    <!--<a href="#" onclick="navegar('dashboard', this)">Inicio</a>
+    <a href="#" onclick="navegar('productos', this)">Productos</a>
+    <a href="#" onclick="navegar('ventas', this)">Cantidad de Ventas</a>
+    <a href="#" onclick="navegar('reportes', this)">Reportes</a>-->
+</aside>
+
+<main>
+    <section id="login" class="active">
+        <div class="card">
+            <h2>Login</h2>
+            <input type="text" placeholder="Username" id="user"><br>
+            <input type="password" placeholder="Password" id="pass"><br>
+            <button onclick="iniciarSesion()">Login</button><br>
+            <span class="small-text">¿Olvidaste tu contraseña?</span>
+        </div>
+    </section>
+
+    <section id="dashboard">
+        <div class="card">
+            <h2>¡Bienvenido!</h2>
+            <div class="panel-buttons">
+                <button onclick="navegar('productos')">Producto</button>
+                <button onclick="navegar('ventas')">Ventas</button>
+                <button onclick="navegar('reportes')">Bajo Stock</button>
+            </div>
+            <div style="margin-top: 20px;">
+                <p>[Aquí iría una gráfica de ventas]</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="productos">
+        <div class="card">
+            <h2>Productos</h2>
+            <p>Nombre | Categoría | Stock | Fecha</p>
+            <p>------------------------------</p>
+            <button>+ Añadir producto</button>
+        </div>
+    </section>
+
+    <section id="ventas">
+        <div class="card">
+            <h2>Ventas</h2>
+            <input type="text" placeholder="Producto"><br>
+            <input type="number" placeholder="Cantidad"><br>
+            <button>Guardar</button>
+        </div>
+    </section>
+
+    <section id="reportes">
+        <div class="card">
+            <h2>Reportes</h2>
+            <button>Bajo Stock</button>
+            <button>Ventas por Mes</button>
+        </div>
+    </section>
+</main>
+
+<script>
+    function navegar(id, link = null) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+
+        document.querySelectorAll('aside a').forEach(a => a.classList.remove('active'));
+        if (link) link.classList.add('active');
+    }
+
+    function iniciarSesion() {
+        const usuario = document.getElementById('user').value;
+        const pass = document.getElementById('pass').value;
+
+        if (usuario && pass) {
+
+            $.ajax({
+                method:"POST",
+                url: "/login",
+                contentType: 'application/json',
+                dataType: 'json',
+                data:
+                    JSON.stringify({
+                        correo:usuario,
+                        contrasena:pass
+                    })
+                ,
+                success: function( result ) {
+                    if (result.estado=="ok"){
+                        window.location.href = "/invexort";
+                    }else {
+                        alert(result.mensaje)
+                    }
+
+                },
+                error:function (parametro1,parametro2,parametro3) {
+                    alert(parametro1)
+
+                }
+            });
+
+        } else {
+            alert("Por favor, completa ambos campos");
+        }
+    }
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Invexort - Prototipo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            background: #eaeaea;
+        }
+
+        aside {
+            width: 200px;
+            background: #2c2c2c;
+            color: white;
+            padding: 20px;
+        }
+
+        aside h2 {
+            margin-top: 0;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        aside a {
+            display: block;
+            margin: 10px 0;
+            color: #ccc;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        aside a.active, aside a:hover {
+            background: #444;
+            color: white;
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        section {
+            display: none;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        input, button,select {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #2c2c2c;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #444;
+        }
+
+        .panel-buttons button {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .small-text {
+            font-size: 12px;
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        thead {
+            background-color: #000000;
+            color: #fff;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        caption {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+
+        .container-table {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            margin: 30px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+    </style>
+</head>
+<body>
+<aside>
+    <h2>INVEXORT</h2>
+
+    <a href="#" onclick="navegar('dashboard', this)" class="active">Inicio</a>
+    <a href="#" onclick="navegar('productos', this)">Productos</a>
+    <a href="#" onclick="navegar('ventas', this)">Cantidad de Ventas</a>
+    <a href="#" onclick="navegar('reportes', this)">Reportes</a>
+    <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+</aside>
+
+<main>
+    <section id="login" >
+        <div class="card">
+            <h2>Login</h2>
+            <input type="text" placeholder="Username" id="user"><br>
+            <input type="password" placeholder="Password" id="pass"><br>
+            <button onclick="cerrarSesion()">Login</button><br>
+            <span class="small-text">¿Olvidaste tu contraseña?</span>
+        </div>
+    </section>
+
+    <section id="dashboard" class="active">
+        <div class="card">
+            <h2>¡Bienvenido!</h2>
+            <div class="panel-buttons">
+                <button onclick="navegar('productos')">Producto</button>
+                <button onclick="navegar('ventas')">Ventas</button>
+                <button onclick="navegar('reportes')">Bajo Stock</button>
+            </div>
+            <div style="margin-top: 20px;">
+                <p>[Aquí iría una gráfica de ventas]</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="productos">
+        <div class="card">
+            <h2>Productos</h2>
+            <table id="tablaProductos" border="1">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    <th>Fecha</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Aquí se va a llenar -->
+                </tbody>
+            </table>
+            <form>
+                <input type="text" id="nombre" placeholder="Ingrese nombre del producto">
+                <select id="categoria">
+                    <option value="Alimentos">Alimentos</option>
+                    <option value="Deporte">Deporte</option>
+                    <option value="Electronica">Electronica</option>
+                    <option value="Papeleria">Papeleria</option>
+                    <option value="Ropa">Ropa</option>
+                </select>
+                <input type="number" id="stock" placeholder="Ingrese la existencia" min="0">
+                <input type="number" id="precio" placeholder="Ingrese el precio" min="0.1" >
+                <input type="date" id="fecha" placeholder="Fecha">
+            </form>
+            <button onclick="agregarproducto()">+ Añadir producto</button>
+        </div>
+    </section>
+
+    <section id="ventas">
+        <div class="card">
+
+            <h2>Ventas</h2>
+
+            <select id="producto">
+
+            </select>
+            <input id="cantidad_venta" type="number" placeholder="Cantidad"><br>
+            <button onclick="venderProducto()">Vender</button>
+            <table id="tablaVentas" border="1">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Aquí se va a llenar -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="reportes">
+        <div class="card">
+            <h2>Reportes</h2>
+            <button>Bajo Stock</button>
+            <table id="tablaStock" border="1">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Categoria</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                    <th>Fecha</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Aquí se va a llenar -->
+                </tbody>
+            </table>
+
+            <button>Ventas por Mes</button>
+            <div id="contenedorGrafico">
+                <canvas id="miGraficoAjax" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    function navegar(id, link = null) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+
+        document.querySelectorAll('aside a').forEach(a => a.classList.remove('active'));
+        if (link) link.classList.add('active');
+    }
+
+    function agregarproducto() {
+        nombreProducto=document.getElementById("nombre").value;
+        categoriaProducto=document.getElementById("categoria").value;
+        stockProducto=document.getElementById("stock").value;
+        fechaProducto=document.getElementById("fecha").value;
+        precioProducto=document.getElementById("precio").value
+        $.ajax({
+            method:"POST",
+            url: "/producto",
+            contentType: 'application/json',
+            dataType: 'json',
+            data:JSON.stringify({
+                nombre:nombreProducto,
+                categoria:categoriaProducto,
+                stock:stockProducto,
+                fecha:fechaProducto,
+                precio:precioProducto
+            }),
+            success: function( result ) {
+                if (result.estado=="ok"){
+                   alert(result.mensaje)
+                    let filas = '';
+                    result.productos.forEach(function(p) {
+                        filas += `
+                            <tr>
+                                <td>${p.id}</td>
+                                <td>${p.nombre}</td>
+                                <td>${p.categoria}</td>
+                                <td>${p.stock}</td>
+                                 <td>${p.precio}</td>
+                                <td>${p.fecha}</td>
+                            </tr>
+                `       ;
+                    });
+                    $('#tablaProductos tbody').html(filas);
+                }else {
+                    alert(result.mensaje)
+                }
+
+            },
+            error:function (parametro1,parametro2,parametro3) {
+                alert(parametro1)
+
+            }
+        });
+    }
+
+    function cerrarSesion() {
+        $.ajax({
+            method:"POST",
+            url: "/logout",
+            data:{},
+            success: function( result ) {
+                if (result.estado=="ok"){
+                    window.location.href = "/login";
+                }else {
+                    alert(result.mensaje)
+                }
+
+            },
+            error:function (parametro1,parametro2,parametro3) {
+                alert(parametro1)
+
+            }
+        });
+    }
+
+    function  venderProducto(){
+        productoVender=document.getElementById("producto").value
+        cantidadVender=document.getElementById("cantidad_venta").value
+        $.ajax({
+            method:"POST",
+            url: "/venta",
+            contentType: 'application/json',
+            dataType: 'json',
+            data:JSON.stringify({
+                id:productoVender,
+                cantidad:cantidadVender,
+
+            }),
+            success: function( result ) {
+                if (result.estado=="ok"){
+                    alert(result.mensaje)
+                    cargarVentas();
+                    cargarProductos();
+                    bajoStock();
+                    cargarGrafico()
+                }else {
+                    alert(result.mensaje)
+                }
+
+            },
+            error:function (parametro1,parametro2,parametro3) {
+                alert(parametro1)
+
+            }
+        });
+
+    }
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $( document ).ready(function() {
+        cargarProductos();
+        cargarVentas();
+        bajoStock();
+        cargarGrafico();
+    });
+
+    function cargarGrafico(){
+        $.ajax({
+            url: '/ventasmes',  // ← tu endpoint backend
+            method: 'GET',
+            success: function (respuesta) {
+                // Asumimos que 'respuesta' es un array de objetos con mes y total
+                const labels = respuesta.ventas_mes.map(item => item.mes);
+                const datos = respuesta.ventas_mes.map(item => item.total);
+                // Eliminar el canvas anterior
+                $('#miGraficoAjax').remove();
+
+                // Agregar uno nuevo
+                $('#contenedorGrafico').append('<canvas id="miGraficoAjax"></canvas>');
+
+                const ctx = document.getElementById('miGraficoAjax').getContext('2d');
+                const miGrafico = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Ventas por mes ($)',
+                            data: datos,
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            error: function () {
+                alert('Error al cargar datos del servidor.');
+            }
+        });
+    }
+
+    function bajoStock(){
+        $.ajax({
+            method: "GET",
+            url: "/stock",
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {},
+            success: function (result) {
+                if (result.estado == "ok") {
+                    let filas = '';
+                    result.productos.forEach(function (p) {
+
+                        filas += `
+                            <tr>
+                                <td>${p.id}</td>
+                                <td>${p.nombre}</td>
+                                <td>${p.categoria}</td>
+                                <td>${p.stock}</td>
+                                <td>${p.precio}</td>
+                                <td>${p.fecha}</td>
+                            </tr>
+                `;
+                    });
+                    $('#tablaStock tbody').html(filas);
+                } else {
+                    alert(result.mensaje)
+                }
+
+            },
+            error: function (parametro1, parametro2, parametro3) {
+                alert(parametro1)
+
+            }
+        });
+
+    }
+
+    function  cargarVentas() {
+        $.ajax({
+            method: "GET",
+            url: "/listadoventas",
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {},
+            success: function (result) {
+                if (result.estado == "ok") {
+                    let filas = '';
+                    result.ventas.forEach(function (p) {
+
+                        filas += `
+                            <tr>
+                                <td>${p.id}</td>
+                                <td>${p.producto}</td>
+                                <td>${p.cantidad}</td>
+                                <td>${p.precio}</td>
+                                <td>${p.subtotal}</td>
+                            </tr>
+                `;
+                    });
+                    $('#tablaVentas tbody').html(filas);
+                } else {
+                    alert(result.mensaje)
+                }
+
+            },
+            error: function (parametro1, parametro2, parametro3) {
+                alert(parametro1)
+
+            }
+        });
+    }
+
+    function cargarProductos() {
+
+        $.ajax({
+            method: "GET",
+            url: "/productos",
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {},
+            success: function (result) {
+                if (result.estado == "ok") {
+                    let filas = '';
+                    $('#producto').empty()
+                    result.productos.forEach(function (p) {
+
+                        $('#producto').append(
+                            $('<option>', {
+                                value: p.id,
+                                text: p.nombre
+                            })
+                        );
+                        filas += `
+                            <tr>
+                                <td>${p.id}</td>
+                                <td>${p.nombre}</td>
+                                <td>${p.categoria}</td>
+                                <td>${p.stock}</td>
+                                <td>${p.precio}</td>
+                                <td>${p.fecha}</td>
+                            </tr>
+                `;
+                    });
+                    $('#tablaProductos tbody').html(filas);
+                } else {
+                    alert(result.mensaje)
+                }
+
+            },
+            error: function (parametro1, parametro2, parametro3) {
+                alert(parametro1)
+
+            }
+        });
+
+    }
+
+
+</script>
+</body>
+</html>
