@@ -12,7 +12,7 @@ public class VentaService {
     private JdbcTemplate jdbcTemplate;
 
     public List<VentasMes> obtenerVentasMensuales() {
-        String sql = "SELECT MONTH(fecha) as mes, SUM(subtotal) as total FROM detalle_venta GROUP BY mes";
+        String sql = "SELECT MONTH(fecha) as mes, SUM(subtotal) as total FROM detalle_venta GROUP BY mes ORDER BY mes";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             int numeroMes = rs.getInt("mes");
