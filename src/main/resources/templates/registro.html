@@ -171,7 +171,10 @@
         const usuario = document.getElementById('user').value;
         const pass = document.getElementById('pass').value;
         const nombre = document.getElementById('nombre').value;
-        if (usuario && pass && nombre) {
+        let regexNombre = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,}$/;
+        let regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (regexCorreo.test(usuario) && pass && regexNombre.test(nombre)) {
 
             $.ajax({
                 method:"POST",
