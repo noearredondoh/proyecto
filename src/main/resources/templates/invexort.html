@@ -204,8 +204,8 @@
                     <option value="Papeleria">Papeleria</option>
                     <option value="Ropa">Ropa</option>
                 </select>
-                <input type="number" id="stock" placeholder="Ingrese la existencia" min="0">
-                <input type="number" id="precio" placeholder="Ingrese el precio" min="0.1" >
+                <input type="number" id="stock" placeholder="Ingrese la existencia" min="1" value="1">
+                <input type="number" id="precio" placeholder="Ingrese el precio" min="1" value="1">
                 <input type="date" id="fecha" placeholder="Fecha">
             </form>
             <button onclick="agregarproducto()">+ Añadir producto</button>
@@ -220,7 +220,7 @@
             <select id="producto">
 
             </select>
-            <input id="cantidad_venta" type="number" placeholder="Cantidad"><br>
+            <input id="cantidad_venta" type="number" placeholder="Cantidad" min="0" value="0"><br>
             <button onclick="venderProducto()">Vender</button>
             <table id="tablaVentas" border="1">
                 <thead>
@@ -282,31 +282,32 @@
         stockProducto=document.getElementById("stock").value;
         fechaProducto=document.getElementById("fecha").value;
         precioProducto=document.getElementById("precio").value
-        $.ajax({
-            method:"POST",
-            url: "/producto",
-            contentType: 'application/json',
-            dataType: 'json',
-            data:JSON.stringify({
-                nombre:nombreProducto,
-                categoria:categoriaProducto,
-                stock:stockProducto,
-                fecha:fechaProducto,
-                precio:precioProducto
-            }),
-            success: function( result ) {
-                if (result.estado=="ok"){
-                   alert(result.mensaje)
-                    let filas = '';
-                    $('#producto').empty()
-                    result.productos.forEach(function(p) {
-                        $('#producto').append(
-                            $('<option>', {
-                                value: p.id,
-                                text: p.nombre
-                            })
-                        );
-                        filas += `
+        if (nombreProducto && parseInt(stockProducto)>0 && parseFloat(precioProducto)>0 && fechaProducto){
+            $.ajax({
+                method:"POST",
+                url: "/producto",
+                contentType: 'application/json',
+                dataType: 'json',
+                data:JSON.stringify({
+                    nombre:nombreProducto,
+                    categoria:categoriaProducto,
+                    stock:stockProducto,
+                    fecha:fechaProducto,
+                    precio:precioProducto
+                }),
+                success: function( result ) {
+                    if (result.estado=="ok"){
+                        alert(result.mensaje)
+                        let filas = '';
+                        $('#producto').empty()
+                        result.productos.forEach(function(p) {
+                            $('#producto').append(
+                                $('<option>', {
+                                    value: p.id,
+                                    text: p.nombre
+                                })
+                            );
+                            filas += `
                             <tr>
                                 <td>${p.id}</td>
                                 <td>${p.nombre}</td>
@@ -316,18 +317,22 @@
                                 <td>${p.fecha}</td>
                             </tr>
                 `       ;
-                    });
-                    $('#tablaProductos tbody').html(filas);
-                }else {
-                    alert(result.mensaje)
+                        });
+                        $('#tablaProductos tbody').html(filas);
+                    }else {
+                        alert(result.mensaje)
+                    }
+
+                },
+                error:function (parametro1,parametro2,parametro3) {
+                    alert(parametro1)
+
                 }
-
-            },
-            error:function (parametro1,parametro2,parametro3) {
-                alert(parametro1)
-
-            }
-        });
+            });
+        }
+        else {
+            alert("Completa los campos correctamente")
+        }
     }
 
     function cerrarSesion() {
@@ -353,33 +358,38 @@
     function  venderProducto(){
         productoVender=document.getElementById("producto").value
         cantidadVender=document.getElementById("cantidad_venta").value
-        $.ajax({
-            method:"POST",
-            url: "/venta",
-            contentType: 'application/json',
-            dataType: 'json',
-            data:JSON.stringify({
-                id:productoVender,
-                cantidad:cantidadVender,
+        if (parseInt(cantidadVender)>0){
+            $.ajax({
+                method:"POST",
+                url: "/venta",
+                contentType: 'application/json',
+                dataType: 'json',
+                data:JSON.stringify({
+                    id:productoVender,
+                    cantidad:cantidadVender,
 
-            }),
-            success: function( result ) {
-                if (result.estado=="ok"){
-                    alert(result.mensaje)
-                    cargarVentas();
-                    cargarProductos();
-                    bajoStock();
-                    cargarGrafico()
-                }else {
-                    alert(result.mensaje)
+                }),
+                success: function( result ) {
+                    if (result.estado=="ok"){
+                        alert(result.mensaje)
+                        cargarVentas();
+                        cargarProductos();
+                        bajoStock();
+                        cargarGrafico()
+                    }else {
+                        alert(result.mensaje)
+                    }
+
+                },
+                error:function (parametro1,parametro2,parametro3) {
+                    alert(parametro1)
+
                 }
+            });
 
-            },
-            error:function (parametro1,parametro2,parametro3) {
-                alert(parametro1)
-
-            }
-        });
+        }else {
+            alert("Complete los campos correctamente")
+        }
 
     }
 
