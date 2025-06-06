@@ -169,4 +169,33 @@ public class HomeController {
         ));
 
     }
+    @GetMapping("/registrarse")
+    public String registrarseFormulario(HttpSession session) {
+        return "registro";
+    }
+
+    @PostMapping("/registrarse")
+    public ResponseEntity<Map<String,Object>> registrarse(@RequestBody Map<String, Object> credenciales) {
+        Usuario usuario=usuarioRepository.findByCredenciales(credenciales.get("correo").toString(), credenciales.get("contrasena").toString());
+
+        if(!Objects.isNull(usuario)){
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "Usuario ya registrado",
+                    "estado", "nok"
+            ));
+        }else {
+            Usuario usuarioNuevo=new Usuario();
+            usuarioNuevo.setCorreo(credenciales.get("correo").toString());
+            usuarioNuevo.setContrasena(credenciales.get("contrasena").toString());
+            usuarioNuevo.setNombre(credenciales.get("nombre").toString());
+
+            usuarioRepository.save(usuarioNuevo);
+
+            return ResponseEntity.ok(Map.of(
+
+                    "mensaje", "Registro exitoso",
+                    "estado", "ok"
+            ));
+        }
+    }
 }

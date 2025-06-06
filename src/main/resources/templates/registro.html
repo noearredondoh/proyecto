@@ -109,11 +109,12 @@
 <main>
     <section id="login" class="active">
         <div class="card">
-            <h2>Login</h2>
+            <h2>Registrarse</h2>
+            <input type="text" placeholder="Nombre" id="nombre"><br>
             <input type="text" placeholder="Username" id="user"><br>
             <input type="password" placeholder="Password" id="pass"><br>
-            <button onclick="iniciarSesion()">Login</button><br>
-            <a href="/registrarse">Registrarse</a>
+            <button onclick="registrarse()">Registrarse</button><br>
+            <a href="/login">Iniciar Sesion</a>
         </div>
     </section>
 
@@ -166,26 +167,27 @@
         if (link) link.classList.add('active');
     }
 
-    function iniciarSesion() {
+    function registrarse() {
         const usuario = document.getElementById('user').value;
         const pass = document.getElementById('pass').value;
-
-        if (usuario && pass) {
+        const nombre = document.getElementById('nombre').value;
+        if (usuario && pass && nombre) {
 
             $.ajax({
                 method:"POST",
-                url: "/login",
+                url: "/registrarse",
                 contentType: 'application/json',
                 dataType: 'json',
                 data:
                     JSON.stringify({
                         correo:usuario,
-                        contrasena:pass
+                        contrasena:pass,
+                        nombre:nombre
                     })
                 ,
                 success: function( result ) {
                     if (result.estado=="ok"){
-                        window.location.href = "/invexort";
+                        alert("Registro exitoso")
                     }else {
                         alert(result.mensaje)
                     }

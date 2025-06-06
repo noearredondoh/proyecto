@@ -37,4 +37,32 @@ public class UsuarioService implements UsuarioRepository {
     public List<Usuario> findAll() {
         return List.of();
     }
+
+    @Override
+    public Usuario findByCorreo(String correo) {
+        Usuario usuario = null;
+        String sql = "SELECT id, nombre, correo FROM usuarios WHERE correo = ?";
+
+        try {
+            usuario = jdbcTemplate.queryForObject(sql, new Object[]{correo}, (rs, rowNum) -> {
+                Usuario u = new Usuario();
+                u.setId(rs.getInt("id"));
+                u.setNombre(rs.getString("nombre"));
+                u.setCorreo(rs.getString("correo"));
+                return u;
+            });
+
+            // Aquí puedes usar el usuario
+        } catch (EmptyResultDataAccessException e) {
+            // No se encontró ningún usuario con esas credenciales
+            usuario = null;
+        }
+        return usuario;
+    }
+
+    @Override
+    public int save(Usuario usuario) {
+        String sql = "INSERT INTO usuarios (nombre,correo, contrasena) VALUES (?, ?, ?)";
+        return jdbcTemplate.update(sql, usuario.getNombre(),usuario.getCorreo(), usuario.getContrasena());
+    }
 }

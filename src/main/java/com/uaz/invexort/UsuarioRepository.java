@@ -8,5 +8,6 @@ import java.util.List;
 public interface UsuarioRepository {
     public Usuario findByCredenciales(String correo, String contrasena);
     public List<Usuario> findAll();
-
+    public Usuario findByCorreo(String correo);
+    int save(Usuario usuario);
 }
